@@ -83,4 +83,22 @@
 - CI/CD with GitHub Actions
 - Containerization with Docker
 
-[... rest of the README remains the same ...]
+```bash
+# Clone the repository
+git clone https://github.com/MohamedHD4K/e-learning.git
+cd e-learning
+
+# Install dependencies
+npm install
+```
+
+```bash
+# Run Frontend
+cd frontend
+npm run dev
+```
+
+```bash
+# Run Backend
+cd backend
+npm run dev
