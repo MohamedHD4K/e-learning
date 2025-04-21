@@ -61,6 +61,17 @@ export const signupValidation: ValidationChain[] = [
     .withMessage("Birthday must be a valid date"),
 ];
 
+export const loginValidation: ValidationChain[] = [
+  body("username").trim().notEmpty().withMessage("Username is required"),
+
+  body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+];
+
 export const validate = (validations: ValidationChain[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     Promise.all(validations.map((validation) => validation.run(req)))

@@ -6,6 +6,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import authRoute from "../routes/auth.route";
+import userRoute from "../routes/user.route";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(cors({ origin: "http://localhost:4000", credentials: true }));
 
 // Routes
 app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
