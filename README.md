@@ -1,7 +1,7 @@
 # 📚 EduSphere - Modern E-Learning Platform
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge&color=4D4C7D)](https://github.com/MohamedHD4K/e-learning/blob/main/LICENSE)
-[![Vite](https://img.shields.io/badge/vite-6.3.1-green?style=for-the-badge&logo=vite&color=FFFF00 zddzdzx)](https://vite.dev/)
+[![Vite](https://img.shields.io/badge/vite-6.3.1-green?style=for-the-badge&logo=vite&color=FFFF00zddzdzx)](https://vite.dev/)
 [![React](https://img.shields.io/badge/react-18.2.0-blue?style=for-the-badge&logo=react&color=61DAFB)](https://react.dev)
 [![NodeJs](https://img.shields.io/badge/node.js-22.12.0-green?style=for-the-badge&logo=node.js&color=023020)](https://nodejs.org/api/cli.html)
 
