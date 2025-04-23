@@ -15,19 +15,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique @db.VarChar(60)
-  username  String   @unique @db.VarChar(35)
-  password  String   @db.VarChar(200)
-  role      Role     @default(USER)
-  firstname String
-  lastname  String
-  phone     String?  @db.VarChar(15)
-  avatar    String?
-  birthday  DateTime
-  gender    Gender
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String    @id @default(cuid())
+  email            String    @unique @db.VarChar(60)
+  username         String    @unique @db.VarChar(35)
+  password         String    @db.VarChar(200)
+  role             Role      @default(USER)
+  firstname        String
+  lastname         String
+  phone            String?   @db.VarChar(15)
+  avatar           String?
+  birthday         DateTime
+  confirmPassword  String    @db.VarChar(200)
+  gender           Gender
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  resetToken       String?
+  resetTokenExpiry DateTime?
 }
 
 enum Gender {

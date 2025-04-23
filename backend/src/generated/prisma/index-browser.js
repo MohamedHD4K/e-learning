@@ -128,9 +128,12 @@ exports.Prisma.UserScalarFieldEnum = {
   phone: 'phone',
   avatar: 'avatar',
   birthday: 'birthday',
+  confirmPassword: 'confirmPassword',
   gender: 'gender',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry'
 };
 
 exports.Prisma.SortOrder = {
