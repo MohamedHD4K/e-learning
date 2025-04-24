@@ -136,6 +136,35 @@ exports.Prisma.UserScalarFieldEnum = {
   resetTokenExpiry: 'resetTokenExpiry'
 };
 
+exports.Prisma.CourseScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  userId: 'userId'
+};
+
+exports.Prisma.VideoScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  bio: 'bio',
+  courseId: 'courseId',
+  likeCount: 'likeCount',
+  dislikeCount: 'dislikeCount'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  text: 'text'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  userId: 'userId',
+  videoId: 'videoId',
+  commentId: 'commentId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -160,8 +189,17 @@ exports.Gender = exports.$Enums.Gender = {
   FEMALE: 'FEMALE'
 };
 
+exports.ReactionType = exports.$Enums.ReactionType = {
+  LIKE: 'LIKE',
+  DISLIKE: 'DISLIKE'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Course: 'Course',
+  Video: 'Video',
+  Comment: 'Comment',
+  Review: 'Review'
 };
 
 /**

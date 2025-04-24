@@ -1,9 +1,9 @@
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
+import { transporter } from "../utils/mailer";
+import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import { PrismaClient, Role, Gender } from "@prisma";
-import bcrypt from "bcryptjs";
-import { validationResult } from "express-validator";
-import crypto from "crypto";
-import { transporter } from "../utils/mailer";
 
 const prisma = new PrismaClient();
 
