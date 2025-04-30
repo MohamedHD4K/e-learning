@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -125,6 +126,20 @@ const Login = () => {
               <button type="button" className="btn w-full">
                 Google
               </button>
+              <GoogleLogin
+              
+                onSuccess={async (credentialResponse) => {
+                  const token = credentialResponse.credential;
+                  await fetch("http://localhost:3000/api/auth/google/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token }),
+                  });
+                }}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
               <button type="button" className="btn w-full">
                 GitHub
               </button>

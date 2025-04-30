@@ -4,8 +4,12 @@ import { transporter } from "../utils/mailer";
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import { PrismaClient, Role, Gender } from "@prisma";
+import { OAuth2Client } from "google-auth-library";
+import generateJsonWebToken from "../utils/generateJosnWebToken";
 
 const prisma = new PrismaClient();
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -59,7 +63,9 @@ export const signup = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(201).json({ message: "User created successfuly" });
+    generateJsonWebToken(password, req, res);
+
+    return res.status(201).json({ message: "User created successfuly" , user });
   } catch (error) {
     console.error("Error in auth controller Signup:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -85,13 +91,15 @@ export const login = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const dehashedPassword = await bcrypt.compare(password, user.password);
+    const dehashedPassword = await bcrypt.compare(password, user.password!);
 
     if (!dehashedPassword) {
       return res.status(400).json({ error: "Invaled username or password" });
     }
 
-    return res.status(200).json({ message: "Loged in successfuly" });
+    generateJsonWebToken(password, req, res);
+
+    return res.status(200).json({ message: "Loged in successfuly" , user });
   } catch (error) {
     console.error("Error in auth controller Signup:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -168,5 +176,76 @@ export const resetPassword = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error in resetPassword:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const signupWithGoogleAccount = async (req: Request, res: Response) => {
+  const { token } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: payload?.email },
+    });
+
+    if (existingUser)
+      return res.status(400).json({ error: "User has been taken" });
+
+    const user = await prisma.user.create({
+      data: {
+        username: payload?.name!,
+        email: payload?.email!,
+        id: payload?.sub,
+        avatar: payload?.picture,
+        firstname: payload?.given_name!,
+        lastname: payload?.family_name!,
+      },
+    });
+
+    generateJsonWebToken(payload?.name!, req, res);
+
+    return res.status(200).json({ message: "Loged in successfuly" , user });
+  } catch (error) {
+    res.status(401).json({ error: "Invalid token" , message : error });
+  }
+};
+
+export const loginWithGoogleAccount = async (req: Request, res: Response) => {
+  const { token } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    const user = await prisma.user.findUnique({
+      where: { email: payload?.email },
+    });
+
+    if (!user) {
+      const user = await prisma.user.create({
+        data: {
+          username: payload?.name!,
+          email: payload?.email!,
+          id: payload?.sub,
+          avatar: payload?.picture,
+          firstname: payload?.given_name!,
+          lastname: payload?.family_name!,
+        },
+      });
+
+      generateJsonWebToken(payload?.name!, req, res);
+
+      return res.status(201).json({ user });
+    }
+
+    return res.status(200).json({ message : "Loged in successfuly" , user });
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
   }
 };

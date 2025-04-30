@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
   const [fullName, setFullName] = useState("");
@@ -188,10 +189,7 @@ const Signup = () => {
                 className="checkbox checkbox-primary"
                 required
               />
-              <label
-                htmlFor="terms"
-                className="ml-2 block text-sm text-info"
-              >
+              <label htmlFor="terms" className="ml-2 block text-sm text-info">
                 I agree to the{" "}
                 <Link
                   to="/terms"
@@ -212,8 +210,10 @@ const Signup = () => {
             <div className={`${!agreeTerms && "cursor-not-allowed"}`}>
               <button
                 type="submit"
-                className={`btn btn-primary ${!agreeTerms && "opacity-70 pointer-events-none cursor-not-allowed"} w-full`}
-                
+                className={`btn btn-primary ${
+                  !agreeTerms &&
+                  "opacity-70 pointer-events-none cursor-not-allowed"
+                } w-full`}
               >
                 {!loading ? "Creating account..." : "Create account"}
               </button>
@@ -236,6 +236,20 @@ const Signup = () => {
               <button type="button" className="btn btn-primary w-full">
                 Google
               </button>
+              <GoogleLogin
+              
+                onSuccess={async (credentialResponse) => {
+                  const token = credentialResponse.credential;
+                  await fetch("http://localhost:3000/api/auth/google/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token }),
+                  });
+                }}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
               <button type="button" className="btn btn-primary w-full">
                 Facebook
               </button>
