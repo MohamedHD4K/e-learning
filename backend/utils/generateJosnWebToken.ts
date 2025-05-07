@@ -19,7 +19,7 @@ const generateJsonWebToken = (
 
   const token = jwt.sign(payload, secret, { expiresIn: "30d" });
 
-  res.cookie("Token", token, {
+  res.cookie("token", token, {
     maxAge: 30 * 24 * 60 * 1000,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

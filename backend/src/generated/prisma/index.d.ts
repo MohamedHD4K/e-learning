@@ -1614,8 +1614,8 @@ export namespace Prisma {
     username: string
     password: string | null
     role: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname: string | null
+    lastname: string | null
     phone: string | null
     avatar: string | null
     birthday: Date | null
@@ -1742,8 +1742,8 @@ export namespace Prisma {
       username: string
       password: string | null
       role: $Enums.Role | null
-      firstname: string
-      lastname: string
+      firstname: string | null
+      lastname: string | null
       phone: string | null
       avatar: string | null
       birthday: Date | null
@@ -7261,8 +7261,8 @@ export namespace Prisma {
     username?: StringFilter<"User"> | string
     password?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleNullableFilter<"User"> | $Enums.Role | null
-    firstname?: StringFilter<"User"> | string
-    lastname?: StringFilter<"User"> | string
+    firstname?: StringNullableFilter<"User"> | string | null
+    lastname?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
     avatar?: StringNullableFilter<"User"> | string | null
     birthday?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -7282,8 +7282,8 @@ export namespace Prisma {
     username?: SortOrder
     password?: SortOrderInput | SortOrder
     role?: SortOrderInput | SortOrder
-    firstname?: SortOrder
-    lastname?: SortOrder
+    firstname?: SortOrderInput | SortOrder
+    lastname?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     avatar?: SortOrderInput | SortOrder
     birthday?: SortOrderInput | SortOrder
@@ -7306,8 +7306,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleNullableFilter<"User"> | $Enums.Role | null
-    firstname?: StringFilter<"User"> | string
-    lastname?: StringFilter<"User"> | string
+    firstname?: StringNullableFilter<"User"> | string | null
+    lastname?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
     avatar?: StringNullableFilter<"User"> | string | null
     birthday?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -7327,8 +7327,8 @@ export namespace Prisma {
     username?: SortOrder
     password?: SortOrderInput | SortOrder
     role?: SortOrderInput | SortOrder
-    firstname?: SortOrder
-    lastname?: SortOrder
+    firstname?: SortOrderInput | SortOrder
+    lastname?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     avatar?: SortOrderInput | SortOrder
     birthday?: SortOrderInput | SortOrder
@@ -7351,8 +7351,8 @@ export namespace Prisma {
     username?: StringWithAggregatesFilter<"User"> | string
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleNullableWithAggregatesFilter<"User"> | $Enums.Role | null
-    firstname?: StringWithAggregatesFilter<"User"> | string
-    lastname?: StringWithAggregatesFilter<"User"> | string
+    firstname?: StringNullableWithAggregatesFilter<"User"> | string | null
+    lastname?: StringNullableWithAggregatesFilter<"User"> | string | null
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     birthday?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -7591,8 +7591,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -7612,8 +7612,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -7633,8 +7633,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7654,8 +7654,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7675,8 +7675,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -7693,8 +7693,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7711,8 +7711,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9081,8 +9081,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9101,8 +9101,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9165,8 +9165,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9185,8 +9185,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9313,8 +9313,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9333,8 +9333,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9393,8 +9393,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9413,8 +9413,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9466,8 +9466,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9486,8 +9486,8 @@ export namespace Prisma {
     username: string
     password?: string | null
     role?: $Enums.Role | null
-    firstname: string
-    lastname: string
+    firstname?: string | null
+    lastname?: string | null
     phone?: string | null
     avatar?: string | null
     birthday?: Date | string | null
@@ -9568,8 +9568,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9588,8 +9588,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

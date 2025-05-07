@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import { PrismaClient, Role, Gender } from "@prisma";
 import { OAuth2Client } from "google-auth-library";
 import generateJsonWebToken from "../utils/generateJosnWebToken";
+import fetch from "node-fetch";
+import { jwtDecode } from "jwt-decode";
 
 const prisma = new PrismaClient();
 
@@ -13,27 +15,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const signup = async (req: Request, res: Response) => {
   try {
-    const {
-      username,
-      email,
-      password,
-      phone,
-      firstname,
-      lastname,
-      gender,
-      role,
-      birthday,
-    } = req.body;
-
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        errors: errors.array(),
-      });
-    }
-
+    const { username, email, password } = req.body;
     const takenUsername = await prisma.user.findUnique({ where: { username } });
 
     if (takenUsername) {
@@ -54,18 +36,13 @@ export const signup = async (req: Request, res: Response) => {
         username,
         email,
         password: hashedPassword,
-        phone,
-        role: role as Role,
-        firstname,
-        lastname,
-        gender: gender as Gender,
-        birthday,
       },
     });
 
     generateJsonWebToken(password, req, res);
 
-    return res.status(201).json({ message: "User created successfuly" , user });
+    console.log({ message: "User created successfuly", user });
+    return res.status(201).json({ message: "User created successfuly", user });
   } catch (error) {
     console.error("Error in auth controller Signup:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -99,11 +76,23 @@ export const login = async (req: Request, res: Response) => {
 
     generateJsonWebToken(password, req, res);
 
-    return res.status(200).json({ message: "Loged in successfuly" , user });
+    console.log({ message: "Loged in successfuly", user });
+    return res.status(200).json({ message: "Loged in successfuly", user });
   } catch (error) {
     console.error("Error in auth controller Signup:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  console.log({ message: "Logged out successfully" });
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 
 export const forgotPassword = async (req: Request, res: Response) => {
@@ -179,73 +168,60 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const signupWithGoogleAccount = async (req: Request, res: Response) => {
-  const { token } = req.body;
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-
-    const existingUser = await prisma.user.findUnique({
-      where: { email: payload?.email },
-    });
-
-    if (existingUser)
-      return res.status(400).json({ error: "User has been taken" });
-
-    const user = await prisma.user.create({
-      data: {
-        username: payload?.name!,
-        email: payload?.email!,
-        id: payload?.sub,
-        avatar: payload?.picture,
-        firstname: payload?.given_name!,
-        lastname: payload?.family_name!,
-      },
-    });
-
-    generateJsonWebToken(payload?.name!, req, res);
-
-    return res.status(200).json({ message: "Loged in successfuly" , user });
-  } catch (error) {
-    res.status(401).json({ error: "Invalid token" , message : error });
-  }
-};
-
 export const loginWithGoogleAccount = async (req: Request, res: Response) => {
-  const { token } = req.body;
+  const { token: code } = req.body;
+
   try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    // تبادل الكود بـ access_token و id_token
+    const response = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: "postmessage",
+        grant_type: "authorization_code",
+      }),
     });
-    const payload = ticket.getPayload();
 
-    const user = await prisma.user.findUnique({
-      where: { email: payload?.email },
+    const data : any = await response.json();
+    if (!data.id_token) {
+      return res.status(401).json({ error: "Failed to exchange code" });
+    }
+
+    // فك تشفير id_token
+    const payload = jwtDecode<any>(data.id_token);
+
+    let user = await prisma.user.findUnique({
+      where: { email: payload.email },
     });
 
+    // إذا لم يوجد المستخدم، قم بإنشائه
     if (!user) {
-      const user = await prisma.user.create({
+      user = await prisma.user.create({
         data: {
-          username: payload?.name!,
-          email: payload?.email!,
-          id: payload?.sub,
-          avatar: payload?.picture,
-          firstname: payload?.given_name!,
-          lastname: payload?.family_name!,
+          username: payload.name,
+          email: payload.email,
+          id: payload.sub,
+          avatar: payload.picture,
+          firstname: payload.given_name,
+          lastname: payload.family_name,
         },
       });
 
-      generateJsonWebToken(payload?.name!, req, res);
+      generateJsonWebToken(payload.name, req, res);
 
-      return res.status(201).json({ user });
+      console.log({ message: "User created and logged in", user });
+      return res.status(201).json({ message: "User created and logged in", user });
     }
+    
+    generateJsonWebToken(payload.name, req, res);
 
-    return res.status(200).json({ message : "Loged in successfuly" , user });
+    console.log({ message: "Logged in successfully", user });
+    return res.status(200).json({ message: "Logged in successfully", user });
   } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
+    console.error(err);
+    return res.status(401).json({ error: "Invalid token", message: err });
   }
 };

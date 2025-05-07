@@ -1,25 +1,70 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAuthStore } from "../stores/auth.store";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "../services/auth.api";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [data, setData] = useState({
+    username: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { login } = useAuthStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login with:", { email, password });
-      setLoading(false);
-      // In a real app, you'd handle authentication here
-    }, 1000);
+    loginMutate(data);
   };
+
+  const handleChanges = (e: React.FormEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const { mutate: loginMutate, isPending: loading } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      login(data.user);
+      toast.success(<p className="font-bold">Loged in successfuly</p>);
+    },
+    onError: (error) => {
+      toast.error(<p className="font-bold">{error.message}</p>);
+    },
+  });
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (credentialResponse) => {
+      try {
+        const token = credentialResponse.code;
+        const res = await fetch("http://localhost:3000/api/auth/google/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+          credentials : "include"
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) {
+          toast.error(data.error || "Login failed");
+          return;
+        }
+  
+        toast.success(<p className="font-bold">Logged in successfully</p>);
+      } catch (error) {
+        toast.error("Something went wrong during login");
+        console.error(error);
+      }
+    },
+    onError: () => {
+      toast.error("Google login failed");
+    },
+    flow: "auth-code",
+  });
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-base-200">
@@ -37,22 +82,22 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium text-secondary"
               >
-                Email address
+                Username
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  name="username"
+                  type="username"
+                  autoComplete="username"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={data.username}
+                  onChange={handleChanges}
                   className="input input-bordered rounded w-full"
-                  placeholder="your@email.com"
+                  placeholder="Enter your name"
                 />
               </div>
             </div>
@@ -71,8 +116,9 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  value={data.password}
+                  onChange={handleChanges}
                   className="input input-bordered rounded w-full pr-10"
                 />
                 <button
@@ -123,24 +169,14 @@ const Login = () => {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button type="button" className="btn w-full">
+              <button
+                type="button"
+                onClick={() => googleLogin()}
+                className="btn btn-primary w-full"
+              >
                 Google
               </button>
-              <GoogleLogin
-              
-                onSuccess={async (credentialResponse) => {
-                  const token = credentialResponse.credential;
-                  await fetch("http://localhost:3000/api/auth/google/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token }),
-                  });
-                }}
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-              />
-              <button type="button" className="btn w-full">
+              <button type="button" className="btn text-white bg-base-100 hover:bg-base-200 w-full">
                 GitHub
               </button>
             </div>
@@ -157,6 +193,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };

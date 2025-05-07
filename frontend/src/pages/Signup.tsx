@@ -1,52 +1,91 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAuthStore } from "../stores/auth.store";
+import { useMutation } from "@tanstack/react-query";
+import toast, { Toaster } from "react-hot-toast";
+import { signupUser } from "../services/auth.api";
 
 const Signup = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [data, setData] = useState({
+    username: "",
+    password: "",
+    email: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuthStore();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    singupMutate(data);
+  };
+
+  const handleChanges = (e: React.FormEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    if (name === "password") validatePassword(value);
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const { mutate: singupMutate, isPending: loading } = useMutation({
+    mutationFn: signupUser,
+    onSuccess: (data) => {
+      login(data.user);
+      toast.success(<p className="font-bold">User created successfuly</p>);
+      setData({
+        username: "",
+        password: "",
+        email: "",
+      });
+      setConfirmPassword("");
+    },
+    onError: (error) => {
+      toast.error(<p className="font-bold">{error.message}</p>);
+    },
+  });
 
   const validatePassword = (pass: string) => {
-    if (pass.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
+    if (pass.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
       return false;
     }
     setPasswordError("");
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validatePassword(password)) {
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-
-    if (!agreeTerms) {
-      return;
-    }
-
-    setLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Signup with:", { fullName, email, password });
-      setLoading(false);
-      // In a real app, you'd handle account creation here
-    }, 1000);
-  };
+ 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (credentialResponse) => {
+      try {
+        const token = credentialResponse.code;
+        const res = await fetch("http://localhost:3000/api/auth/google/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+          credentials : "include"
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) {
+          toast.error(data.error || "Login failed");
+          return;
+        }
+  
+        toast.success(<p className="font-bold">Logged in successfully</p>);
+      } catch (error) {
+        toast.error("Something went wrong during login");
+        console.error(error);
+      }
+    },
+    onError: () => {
+      toast.error("Google login failed");
+    },
+    flow: "auth-code",
+  });
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-base-200">
@@ -64,20 +103,20 @@ const Signup = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="fullName"
+                htmlFor="username"
                 className="block text-sm font-medium text-secondary"
               >
-                Full name
+                User name
               </label>
               <div className="mt-1">
                 <input
-                  id="fullName"
-                  name="fullName"
+                  id="username"
+                  name="username"
                   type="text"
                   autoComplete="name"
                   required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  value={data.username}
+                  onChange={handleChanges}
                   className="input input-bordered rounded w-full"
                   placeholder="John Doe"
                 />
@@ -98,8 +137,8 @@ const Signup = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={data.email}
+                  onChange={handleChanges}
                   className="input input-bordered rounded w-full"
                   placeholder="your@email.com"
                 />
@@ -120,11 +159,8 @@ const Signup = () => {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   required
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    validatePassword(e.target.value);
-                  }}
+                  value={data.password}
+                  onChange={handleChanges}
                   className={`input input-bordered rounded w-full pr-10 ${
                     passwordError ? "input-error" : ""
                   }`}
@@ -145,7 +181,7 @@ const Signup = () => {
                 <p className="text-sm text-error mt-1">{passwordError}</p>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Must be at least 8 characters
+                Must be at least 6 characters
               </p>
             </div>
 
@@ -166,13 +202,13 @@ const Signup = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className={`input input-bordered rounded w-full ${
-                    password !== confirmPassword && confirmPassword
+                    data.password !== confirmPassword && confirmPassword
                       ? "input-error"
                       : ""
                   }`}
                 />
               </div>
-              {password !== confirmPassword && confirmPassword && (
+              {data.password !== confirmPassword && confirmPassword && (
                 <p className="text-sm text-error mt-1">
                   Passwords do not match
                 </p>
@@ -215,7 +251,7 @@ const Signup = () => {
                   "opacity-70 pointer-events-none cursor-not-allowed"
                 } w-full`}
               >
-                {!loading ? "Creating account..." : "Create account"}
+                {loading ? "Creating account..." : "Create account"}
               </button>
             </div>
           </form>
@@ -233,25 +269,15 @@ const Signup = () => {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button type="button" className="btn btn-primary w-full">
+              <button
+                type="button"
+                onClick={() => googleLogin()}
+                className="btn btn-primary w-full"
+              >
                 Google
               </button>
-              <GoogleLogin
-              
-                onSuccess={async (credentialResponse) => {
-                  const token = credentialResponse.credential;
-                  await fetch("http://localhost:3000/api/auth/google/signup", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token }),
-                  });
-                }}
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-              />
               <button type="button" className="btn btn-primary w-full">
-                Facebook
+                GitHub
               </button>
             </div>
           </div>
@@ -267,6 +293,7 @@ const Signup = () => {
           </p>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };
